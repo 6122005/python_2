@@ -1,7 +1,7 @@
 from pypdf import PdfReader
 
 
-def extract_text(pdf_path, pages=5):
+def extract_text(pdf_path, pages=15):
 
     reader = PdfReader(pdf_path)
 
