@@ -6,7 +6,7 @@ import chromadb
 # Read PDF
 # -----------------------
 
-reader = PdfReader("tutorial.pdf")
+reader = PdfReader("tutorial.pdf")       
 
 text = ""
 
