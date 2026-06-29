@@ -105,23 +105,26 @@ def ask_question(question):
     )
 
     prompt = f"""
+You are a helpful AI assistant.
 
-Answer only using the context below.
+Answer ONLY from the provided context.
 
-If answer is not found,
+If the answer is not present in the context,
+reply exactly:
 
-say "I don't know."
+"I don't know."
+
+Do not use outside knowledge.
+
+Explain the answer in simple language.
 
 Context:
-
 {context}
 
 Question:
-
 {question}
 
 Answer:
-
 """
 
     model = genai.GenerativeModel("gemini-2.5-flash")
