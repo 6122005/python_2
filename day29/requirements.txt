@@ -6,3 +6,7 @@ chromadb
 sentence-transformers
 pypdf2
 ollama
+pypdf
+python-dotenv
+google-generativeai
+langchain-google-genai
