@@ -16,3 +16,4 @@ temp.pdf
 
 # macOS
 .DS_Store
+.env

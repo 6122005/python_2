@@ -6,8 +6,21 @@ from langchain_community.embeddings import SentenceTransformerEmbeddings
 
 from langchain_chroma import Chroma
 
-import ollama
+import os
+import google.generativeai as genai
+from dotenv import load_dotenv
 
+
+# load_dotenv()
+
+# GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+# genai.configure(api_key=GOOGLE_API_KEY)
+
+load_dotenv()
+
+genai.configure(
+    api_key=os.getenv("GOOGLE_API_KEY")
+)
 
 DB_PATH = "chroma_db"
 
@@ -111,22 +124,8 @@ Answer:
 
 """
 
-    response = ollama.chat(
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
-        model="gemma3:1b",
+    response = model.generate_content(prompt)
 
-        messages=[
-
-            {
-
-                "role": "user",
-
-                "content": prompt
-
-            }
-
-        ]
-
-    )
-
-    return response["message"]["content"]
+    return response.text
