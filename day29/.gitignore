@@ -1,0 +1,18 @@
+# Virtual Environment
+.venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Chroma Database
+chroma_db/
+
+# Temporary PDF
+temp.pdf
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
