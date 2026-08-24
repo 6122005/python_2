@@ -1,0 +1,12 @@
+langchain
+langchain-core
+langchain-groq
+langchain-huggingface
+langgraph
+langchain-community
+chromadb
+pypdf
+wikipedia
+duckduckgo-search
+python-dotenv
+fpdf
