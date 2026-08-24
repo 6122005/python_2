@@ -1,0 +1,12 @@
+langchain
+langchain-core
+langchain-openai
+langchain-anthropic
+langchain-community
+langgraph
+langchain-google-genai
+langchain-groq
+duckduckgo-search
+python-dotenv
+pytz
+requests
