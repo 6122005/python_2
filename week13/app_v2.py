@@ -5,8 +5,15 @@ from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 st.set_page_config(page_title="Smart Research Assistant v2", page_icon="🕵️‍♂️")
 
 st.title("🕵️‍♂️ Smart Research Assistant v2")
-st.markdown("This assistant is powered by a **LangGraph Agent** equipped with **DuckDuckGo** and **Wikipedia** tools.")
+st.markdown("This assistant is powered by a **LangGraph Agent** equipped with **Live Weather**, **DuckDuckGo Web Search**, and **Wikipedia** tools.")
 st.markdown("---")
+
+with st.sidebar:
+    st.header("Controls")
+    if st.button("🔄 Reset Agent & Clear Chat"):
+        st.session_state.messages = []
+        st.session_state.agent = get_agent()
+        st.rerun()
 
 # Initialize chat history and agent in session state
 if "messages" not in st.session_state:
