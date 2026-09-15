@@ -100,7 +100,7 @@ if __name__ == "__main__":
     print("\nTEXT EXTRACTED")
     print(f"Characters: {len(text)}")
 
-    query = "References"
+    query = "Embeddings"
 
     fixed_chunks = fixed_chunk(text)
 

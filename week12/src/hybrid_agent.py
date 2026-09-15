@@ -1,6 +1,7 @@
 import os
 import warnings
 from dotenv import load_dotenv
+load_dotenv()
 
 # Suppress warnings for clean output
 warnings.filterwarnings("ignore")
@@ -9,6 +10,9 @@ from langchain_core.tools import tool
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_groq import ChatGroq
 from langgraph.prebuilt import create_react_agent
+
+import sys
+sys.path.insert(0, os.path.dirname(__file__))
 
 # Import the RAG chain builder from Day 58
 from lc_rag import build_rag_chain

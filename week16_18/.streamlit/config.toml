@@ -1,0 +1,13 @@
+[theme]
+# A deliberate, non-default palette so the app reads as a real product
+# rather than "Streamlit's default blue," per D81's "looks intentional"
+# requirement.
+primaryColor = "#2F6F4F"
+backgroundColor = "#FAFAF8"
+secondaryBackgroundColor = "#EFEDE6"
+textColor = "#1F2422"
+font = "sans serif"
+
+[server]
+headless = true
+enableCORS = false

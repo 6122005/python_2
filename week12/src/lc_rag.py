@@ -1,6 +1,7 @@
 import os
 import warnings
 from dotenv import load_dotenv
+load_dotenv()
 
 # Suppress some noisy HuggingFace/Chroma warnings for clean output
 warnings.filterwarnings("ignore")
@@ -14,7 +15,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 def build_rag_chain():
     # 1. Load the PDF
-    pdf_path = os.path.join(os.path.dirname(__file__), "..", "data", "sample.pdf")
+    pdf_path = os.path.join(os.path.dirname(__file__), "..", "data", "tutorial.pdf")
     loader = PyPDFLoader(pdf_path)
     docs = loader.load()
     
@@ -66,7 +67,7 @@ def main():
     rag_chain = build_rag_chain()
     
     print("\n--- LangChain RAG System Ready (Day 58) ---")
-    question = "What is the secret password for the RAG system?"
+    question = "What is the encoder?"
     print(f"\nUser: {question}")
     
     response = rag_chain.invoke({"input": question})

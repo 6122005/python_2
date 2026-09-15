@@ -65,8 +65,8 @@ def run_agent():
     
     agent_executor = create_react_agent(llm, tools)
     
-    print("Agent V3 with 4 tools (Weather, Time, Web Search, Read File) ready!")
-    question = "Read the file at '/Users/darshankanani/python2/python_2/day46/src/../data/sample.txt' and answer all the questions or instructions found inside it. Use the web search tool if you need to find real-time information to answer them."
+    sample_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../data/sample.txt"))
+    question = f"Read the file at '{sample_path}' and answer all the questions or instructions found inside it. Use the web search tool if you need to find real-time information to answer them."
     print(f"\nUser: {question}")
     response = agent_executor.invoke({"messages": [("user", question)]})
     print(f"\nAgent: {response['messages'][-1].content}")

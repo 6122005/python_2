@@ -2,9 +2,12 @@ langchain
 langchain-groq
 langgraph
 langchain-community
+groq
 wikipedia
 duckduckgo-search
 ddgs
 requests
 python-dotenv
 streamlit
+anthropic
+pytest
