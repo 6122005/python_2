@@ -23,10 +23,41 @@ def get_agent():
     # Initialize the LLM
     llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0, groq_api_key=api_key)
     
-    # Initialize Tools
-    search_tool = DuckDuckGoSearchRun()
-    wikipedia_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
-    
+    # Initialize Tools safely
+    try:
+        search_tool = DuckDuckGoSearchRun()
+    except Exception:
+        from langchain_core.tools import tool
+        @tool
+        def search_tool(query: str) -> str:
+            """Search the web for current events, news, and general information."""
+            try:
+                from ddgs import DDGS
+                with DDGS() as ddgs:
+                    res = list(ddgs.text(query, max_results=3))
+                    return "\n\n".join(r["body"] for r in res)
+            except Exception:
+                try:
+                    from duckduckgo_search import DDGS
+                    with DDGS() as ddgs:
+                        res = list(ddgs.text(query, max_results=3))
+                        return "\n\n".join(r["body"] for r in res)
+                except Exception as e:
+                    return f"Search error: {e}"
+
+    try:
+        wikipedia_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
+    except Exception:
+        from langchain_core.tools import tool
+        @tool
+        def wikipedia_tool(query: str) -> str:
+            """Search Wikipedia for encyclopedic facts and history."""
+            try:
+                import wikipedia
+                return wikipedia.summary(query, sentences=3)
+            except Exception as e:
+                return f"Wikipedia error: {e}"
+
     tools = [search_tool, wikipedia_tool]
     
     # Create the ReAct agent
