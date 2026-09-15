@@ -11,8 +11,17 @@ load_dotenv()
 
 def get_agent():
     """Initializes and returns the LangGraph React Agent with tools."""
+    # Check both environment variable and Streamlit Cloud secrets
+    api_key = os.getenv("GROQ_API_KEY")
+    try:
+        import streamlit as st
+        if not api_key and hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
+            api_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        pass
+
     # Initialize the LLM
-    llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0)
+    llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0, groq_api_key=api_key)
     
     # Initialize Tools
     search_tool = DuckDuckGoSearchRun()
