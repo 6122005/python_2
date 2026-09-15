@@ -18,9 +18,20 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(
-    api_key=os.getenv("GOOGLE_API_KEY")
-)
+def get_google_api_key():
+    key = os.getenv("GOOGLE_API_KEY")
+    if not key:
+        try:
+            import streamlit as st
+            if "GOOGLE_API_KEY" in st.secrets:
+                key = st.secrets["GOOGLE_API_KEY"]
+        except Exception:
+            pass
+    return key
+
+api_key = get_google_api_key()
+if api_key:
+    genai.configure(api_key=api_key)
 
 DB_PATH = "chroma_db"
 
@@ -127,8 +138,21 @@ Question:
 Answer:
 """
 
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    key = get_google_api_key()
+    if not key:
+        return "❌ Error: GOOGLE_API_KEY is missing. Please add it to your .env file or Streamlit Cloud Secrets."
 
-    response = model.generate_content(prompt)
+    genai.configure(api_key=key)
 
-    return response.text
+    try:
+        model = genai.GenerativeModel("gemini-2.5-flash")
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        # Fallback to gemini-1.5-flash if 2.5 has issue
+        try:
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            response = model.generate_content(prompt)
+            return response.text
+        except Exception as exc:
+            return f"❌ Google AI API Error: {exc}\nPlease make sure your GOOGLE_API_KEY is valid in Streamlit Secrets."

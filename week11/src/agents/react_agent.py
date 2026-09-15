@@ -17,7 +17,13 @@ from __future__ import annotations
 
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
+
+# Add week11 root to sys.path so direct execution works
+WEEK11_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(WEEK11_ROOT) not in sys.path:
+    sys.path.insert(0, str(WEEK11_ROOT))
 
 from src.llm_client import LLMClient
 
