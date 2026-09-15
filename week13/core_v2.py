@@ -2,15 +2,45 @@ import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langgraph.prebuilt import create_react_agent
-from langchain_community.tools import DuckDuckGoSearchRun
-from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
-from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_core.tools import tool
 
 # Load environment variables
 load_dotenv()
 
+@tool
+def web_search(query: str) -> str:
+    """Search the web for current events, live news, weather, or real-time information."""
+    try:
+        from ddgs import DDGS
+        with DDGS(timeout=7) as ddgs:
+            results = list(ddgs.text(query, max_results=3))
+            if results:
+                return "\n\n".join(r.get("body", "") for r in results if r.get("body"))
+    except Exception:
+        pass
+
+    try:
+        from duckduckgo_search import DDGS
+        with DDGS(timeout=7) as ddgs:
+            results = list(ddgs.text(query, max_results=3))
+            if results:
+                return "\n\n".join(r.get("body", "") for r in results if r.get("body"))
+    except Exception as e:
+        return f"Web search timed out or was temporarily unavailable ({e}). Please answer using your knowledge base."
+
+    return "No search results found."
+
+@tool
+def wikipedia_search(query: str) -> str:
+    """Search Wikipedia for encyclopedic facts, people, sports statistics, and history."""
+    try:
+        import wikipedia
+        return wikipedia.summary(query, sentences=3)
+    except Exception as e:
+        return f"Wikipedia returned: {e}. Answer using your internal knowledge."
+
 def get_agent():
-    """Initializes and returns the LangGraph React Agent with tools."""
+    """Initializes and returns the LangGraph React Agent with resilient tools."""
     # Check both environment variable and Streamlit Cloud secrets
     api_key = os.getenv("GROQ_API_KEY")
     try:
@@ -23,42 +53,7 @@ def get_agent():
     # Initialize the LLM
     llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0, groq_api_key=api_key)
     
-    # Initialize Tools safely
-    try:
-        search_tool = DuckDuckGoSearchRun()
-    except Exception:
-        from langchain_core.tools import tool
-        @tool
-        def search_tool(query: str) -> str:
-            """Search the web for current events, news, and general information."""
-            try:
-                from ddgs import DDGS
-                with DDGS() as ddgs:
-                    res = list(ddgs.text(query, max_results=3))
-                    return "\n\n".join(r["body"] for r in res)
-            except Exception:
-                try:
-                    from duckduckgo_search import DDGS
-                    with DDGS() as ddgs:
-                        res = list(ddgs.text(query, max_results=3))
-                        return "\n\n".join(r["body"] for r in res)
-                except Exception as e:
-                    return f"Search error: {e}"
-
-    try:
-        wikipedia_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
-    except Exception:
-        from langchain_core.tools import tool
-        @tool
-        def wikipedia_tool(query: str) -> str:
-            """Search Wikipedia for encyclopedic facts and history."""
-            try:
-                import wikipedia
-                return wikipedia.summary(query, sentences=3)
-            except Exception as e:
-                return f"Wikipedia error: {e}"
-
-    tools = [search_tool, wikipedia_tool]
+    tools = [web_search, wikipedia_search]
     
     # Create the ReAct agent
     agent_executor = create_react_agent(llm, tools)
@@ -67,7 +62,7 @@ def get_agent():
 if __name__ == "__main__":
     agent = get_agent()
     print("Backend Agent initialized successfully.")
-    print("Testing agent with a simple query...")
+    print("Testing agent with a query...")
     response = agent.invoke({"messages": [("user", "who win 2024 T20 cricket world cup..?")]})
     print("\nResponse:")
     print(response["messages"][-1].content)
