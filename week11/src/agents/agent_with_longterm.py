@@ -14,13 +14,22 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import sys
 import uuid
+from pathlib import Path
+
+# Add week11 root to sys.path so direct execution works
+WEEK11_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(WEEK11_ROOT) not in sys.path:
+    sys.path.insert(0, str(WEEK11_ROOT))
 
 from src.llm_client import LLMClient
 from src.memory.long_term import LongTermMemory
 from src.memory.short_term import ShortTermMemory
 
 BASE_SYSTEM_PROMPT = "You are a concise, helpful assistant."
+DEFAULT_FACTS_PATH = str(WEEK11_ROOT / "data" / "facts.json")
 
 FACT_EXTRACTION_PROMPT = """Review the conversation above. List any durable
 facts about the user worth remembering for future sessions (name,
@@ -35,7 +44,7 @@ class LongTermAgent:
         self,
         session_id: str | None = None,
         llm: LLMClient | None = None,
-        facts_path: str = "data/facts.json",
+        facts_path: str = DEFAULT_FACTS_PATH,
         max_turns: int = 20,
     ) -> None:
         self.session_id = session_id or uuid.uuid4().hex[:8]
@@ -79,7 +88,7 @@ class LongTermAgent:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--session", default=None, help="Session id, e.g. s1 or s2")
-    parser.add_argument("--facts-path", default="data/facts.json")
+    parser.add_argument("--facts-path", default=DEFAULT_FACTS_PATH)
     args = parser.parse_args()
 
     agent = LongTermAgent(session_id=args.session, facts_path=args.facts_path)

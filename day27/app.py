@@ -1,12 +1,20 @@
+import os
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 import chromadb
 
 # -----------------------
+# Paths
+# -----------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+pdf_path = os.path.join(BASE_DIR, "tutorial.pdf")
+db_path = os.path.join(BASE_DIR, "chroma_db")
+
+# -----------------------
 # Read PDF
 # -----------------------
 
-reader = PdfReader("tutorial.pdf")       
+reader = PdfReader(pdf_path)       
 
 text = ""
 
@@ -54,7 +62,7 @@ embeddings = model.encode(chunks)
 # -----------------------
 
 client = chromadb.PersistentClient(
-    path="chroma_db"
+    path=db_path
 )
 
 collection = client.get_or_create_collection(
@@ -67,7 +75,7 @@ collection = client.get_or_create_collection(
 
 for i, chunk in enumerate(chunks):
 
-    collection.add(
+    collection.upsert(
 
         ids=[str(i)],
 
